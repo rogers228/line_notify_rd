@@ -5,11 +5,11 @@ import line_notify_gp
 def main():
     xls = load_excel_gp.Load_xls()
     n_count =   xls.get_nup_count() # 未修改數量
-    last_date = xls.get_last_date() # 最後登入日期
-    sys_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    last_date = xls.get_last_date() # 最後登錄日期
+    sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
     
     if n_count == 0:
-        print('no data')
+        print('nice! it\'s no data.') # 無資料須要維護
         return
     else:
         message = f'圖面回饋尚有 {n_count} 筆未修改！Excel最後登記日期為{last_date}，系統檢查時間為{sys_time}'
