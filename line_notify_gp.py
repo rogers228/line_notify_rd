@@ -1,8 +1,9 @@
 import requests
+import config
 
 class Line():
     def __init__(self):
-        self.token = "V8PzVi8LgPJzQwQdL8MeUPWJU0ZRBXK9QyGp1fiIx3w"
+        self.token = config.sys_token
 
     def post_data(self, message):
         try:

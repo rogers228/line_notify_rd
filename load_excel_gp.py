@@ -2,11 +2,11 @@ import time
 import openpyxl
 import pandas as pd
 import json
+import config
 
 class Load_xls(): #讀取excel
     def __init__(self):
-        self.file = r'\\220.168.100.104\油聖油昇共用資料庫-1\0-部門間資料分享平台使用完應刪除\A-申請品號資料\2022圖面發行登記(新).xlsx'
-        # self.file = r'C:\Users\user\Desktop\test456.xlsx'
+        self.file = config.sys_excel
         self.wb = openpyxl.load_workbook(self.file)
         self.sh = self.wb['車銑床回饋區']
         self.x_title = 1 #標題列位置

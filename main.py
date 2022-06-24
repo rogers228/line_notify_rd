@@ -2,7 +2,7 @@ import time
 import load_excel_gp
 import line_notify_gp
 
-def test1():
+def main():
     xls = load_excel_gp.Load_xls()
     n_count =   xls.get_nup_count() # 未修改數量
     last_date = xls.get_last_date() # 最後登入日期
@@ -18,5 +18,5 @@ def test1():
         line.post_data(message)
 
 if __name__ == '__main__':
-    test1()
+    main()
     print('ok')
