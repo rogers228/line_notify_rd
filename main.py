@@ -3,19 +3,27 @@ import load_excel_gp
 import load_excel_wn
 import line_notify_gp
 
-
-def check_release(): #等待發行
-    # today = datetime.date.today()
+def check_release(): #檢查結案待發行
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
     line = line_notify_gp.Line()
     xls = load_excel_wn.Load_xls()
     df = xls.get_cgp()
     for i, r in df.iterrows():
-        message = f"{r['品號']} {r['品名']}({r['變更後版次']}) 已結案可以發行，系統檢查時間為{sys_time}"
-        print(message)
+        message = f"{r['品號']} {r['品名']} 已結案可以發行 {r['變更後版次']} 版\n系統檢查時間為{sys_time}"
+        # print(message)
         line.post_data(message)
 
-def check_draw(): #等待改圖檢查
+def check_timeout(): #檢查待發行已達提醒時間
+    sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+    line = line_notify_gp.Line()
+    xls = load_excel_wn.Load_xls()
+    df = xls.get_hhk()
+    for i, r in df.iterrows():
+        message = f"{r['品號']} {r['品名']} 提醒日期已到期\n系統檢查時間為{sys_time}"
+        # print(message)
+        line.post_data(message)
+
+def check_draw(): #檢查回饋待改圖
     xls = load_excel_gp.Load_xls()
     n_count =   xls.get_nup_count() # 未修改數量
     last_date = xls.get_last_date() # 最後登錄日期
@@ -44,9 +52,10 @@ def check_draw(): #等待改圖檢查
         line.post_data(message)
 
 def main():
-    check_draw() #等待改圖檢查
-    check_release() #等待發行
+    check_draw() # 檢查回饋待改圖
+    check_release() #檢查結案待發行
+    check_timeout() #檢查待發行已達提醒時間
 
 if __name__ == '__main__':
     main()
-    print('ok')
+    print('line_notify is finished')

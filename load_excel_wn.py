@@ -1,4 +1,4 @@
-import time
+import time, datetime 
 import openpyxl
 import pandas as pd
 import json
@@ -53,51 +53,52 @@ class Load_xls(): #讀取excel
             lis_data.append(row_data)
         # print(lis_data)
         df = pd.DataFrame(lis_data, columns = lis_standard) # 建立 DataFrame
+        df['收件日'] =        pd.to_datetime(df['收件日'], format='%Y-%m-%d %H:%M:%S')
+        df['最近檢查日期'] =  pd.to_datetime(df['最近檢查日期'], format='%Y-%m-%d %H:%M:%S')
+        df['提醒日期'] =      pd.to_datetime(df['提醒日期'], format='%Y-%m-%d %H:%M:%S')
         df = df.fillna('') # 填充NaN為空白
-        df['收件日'] =  pd.to_datetime(df['收件日'], format='%Y-%m-%d %H:%M:%S')
         self.df = df
 
-
-    def get_cgp(self): #應查詢資料
+    def get_cgp(self): #已結案或已指定結案
         df = self.df
-        db = self.db
-
         df_w = df.loc[(df['品號'] != '') & (df['單別'] != '')] # 篩選
 
         lis_data = []
+        dic_func = {'3': self.db.ger_ptd_kd, '5': self.db.ger_tad_kd}
         for i, r in df_w.iterrows():
-            if str(r['單別'])[:1] == '3':
-                # print(r['單別'])
-                # print(r['單號'])
-                # print(r['品號'])
-                # kd = db.ger_ptd_kd(r['單別'], r['單號'], r['品號']) 
-                # print('kd:', kd)
-                if db.ger_ptd_kd(r['單別'], r['單號'], r['品號']) in ['y', 'Y']:
-                    lis_data.append([r['品號'], r['品名'], r['變更後版次']])
+            func = dic_func[str(r['單別'])[:1]]
+            # print(func.__name__)
+            cancel_no = func(r['單別'], r['單號'], r['品號'])  # 結案碼
+            # print(r['單別'], r['單號'], r['品號'], f'結案碼:{cancel_no}')
+            if cancel_no in ['y', 'Y']:
+                lis_data.append([r['品號'], r['品名'], r['變更後版次']])
 
-            elif str(r['單別'])[:1] == '5':
-                # kd = db.ger_tad_kd(r['單別'], r['單號'], r['品號']) 
-                # print('kd:', kd)                
-                if db.ger_tad_kd(r['單別'], r['單號'], r['品號']) in ['y', 'Y']:
-                    lis_data.append([r['品號'], r['品名'], r['變更後版次']])
-
-        # print(lis_data)
         df_y = pd.DataFrame(lis_data, columns = ['品號', '品名', '變更後版次']) # 建立 DataFrame
-        df_y = df_y.fillna('') # 填充NaN為空白
         return df_y
 
-    def test(self):
+    def get_hhk(self): #已到提醒日期
         df = self.df
-        pd.set_option('display.max_rows', df.shape[0]+1) # 顯示最多列
-        pd.set_option('display.max_columns', None) #顯示最多欄位
-        print(df)
-        print(df.dtypes) # 所有欄位資料類型
+        df_w = df.loc[df['提醒日期'] != ''] # 篩選
+
+        today = datetime.datetime.now()
+        lis_data = []
+        for i, r in df_w.iterrows():
+            alarmday = r['提醒日期'].to_pydatetime()
+            timeout_days = (today-alarmday).days # 超時天數
+            # print(timeout_days)
+            if timeout_days >= 0:
+                lis_data.append([r['品號'], r['品名'], r['變更後版次'], r['提醒日期']])
+            
+        df_y = pd.DataFrame(lis_data, columns = ['品號', '品名', '變更後版次', '提醒日期']) # 建立 DataFrame
+        return df_y
+
 
 def test1():
     xls = Load_xls()
-    xls.test()
+    # xls.test()
+    df = xls.get_hhk()
     # df = xls.get_cgp()
-    # print(df)
+    print(df)
     
     # xls.get_last_date()
 
