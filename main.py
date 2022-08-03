@@ -40,7 +40,7 @@ def check_draw(): #檢查回饋待改圖
             message = f'感謝您，系統檢查0筆回饋待改，Excel最後登記日期為{last_date}，系統檢查時間為{sys_time}'
             # print(message)
             line = line_notify_gp.Line()
-            line.post_data(message)
+            line.post_data2(message, 'goodjob01.jpg')
         else:
             print('nice! it\'s no data.') # 無資料須要維護
 
@@ -49,7 +49,7 @@ def check_draw(): #檢查回饋待改圖
         message = f'圖面回饋尚有 {n_count} 筆未修改！Excel最後登記日期為{last_date}，系統檢查時間為{sys_time}'
         # print(message)
         line = line_notify_gp.Line()
-        line.post_data(message)
+        line.post_data2(message, 'comeon01.jpg')
 
 def main():
     check_draw() # 檢查回饋待改圖

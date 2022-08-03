@@ -1,10 +1,13 @@
+# 用於測試的 notify
+# 發佈到我自己的群組 不會影響到現有的群組
+
 import os
 import requests
 import config
 
 class Line():
     def __init__(self):
-        self.token = config.sys_token
+        self.token = config.sys_self_token
 
     def post_data(self, message):
         try:
@@ -26,8 +29,7 @@ class Line():
 
         except Exception as _:
             print(_)
-    
-    # 新增圖片功能
+
     def post_data2(self, message, imgfile=''):
         try:
             url = "https://notify-api.line.me/api/notify"
@@ -44,8 +46,14 @@ class Line():
 
 def test1():
     line = Line()
-    line.post_data('hi, rogers, this is a test2.')
+    line.post_data('hi, rogers, this is a test3.')
+
+def test2():
+    line = Line()
+    # line.post_data2('hi, rogers, this is a test7.', 'goodjob01.jpg')
+    line.post_data2('hi, rogers, this is a test8.', 'comeon01.jpg')
+    # line.post_data2('hi, rogers, this is a test6.')
 
 if __name__ == '__main__':
-    test1()
+    test2()
     print('ok')
