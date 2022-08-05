@@ -9,26 +9,26 @@ class Line():
     def __init__(self):
         self.token = config.sys_self_token
 
-    def post_data(self, message):
-        try:
-            url = "https://notify-api.line.me/api/notify"
-            headers = {
-                'Authorization': f'Bearer {self.token}'
-            }
-            payload = {
-                'message': message
-            }
-            response = requests.request(
-                "POST",
-                url,
-                headers=headers,
-                data=payload
-            )
-            if response.status_code == 200:
-                print(f"Success -> {response.text}")
+    # def post_data(self, message):
+    #     try:
+    #         url = "https://notify-api.line.me/api/notify"
+    #         headers = {
+    #             'Authorization': f'Bearer {self.token}'
+    #         }
+    #         payload = {
+    #             'message': message
+    #         }
+    #         response = requests.request(
+    #             "POST",
+    #             url,
+    #             headers=headers,
+    #             data=payload
+    #         )
+    #         if response.status_code == 200:
+    #             print(f"Success -> {response.text}")
 
-        except Exception as _:
-            print(_)
+    #     except Exception as _:
+    #         print(_)
 
     def post_data2(self, message, imgfile=''):
         try:

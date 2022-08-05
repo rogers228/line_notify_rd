@@ -2,6 +2,7 @@ import time, datetime
 import load_excel_gp
 import load_excel_wn
 import line_notify_gp
+import tool_db_yst
 
 def check_release(): #檢查結案待發行
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
@@ -11,7 +12,7 @@ def check_release(): #檢查結案待發行
     for i, r in df.iterrows():
         message = f"{r['品號']} {r['品名']} 已結案可以發行 {r['變更後版次']} 版\n系統檢查時間為{sys_time}"
         # print(message)
-        line.post_data(message)
+        line.post_data2(message)
 
 def check_timeout(): #檢查待發行已達提醒時間
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
@@ -21,7 +22,7 @@ def check_timeout(): #檢查待發行已達提醒時間
     for i, r in df.iterrows():
         message = f"{r['品號']} {r['品名']} 提醒日期已到期\n系統檢查時間為{sys_time}"
         # print(message)
-        line.post_data(message)
+        line.post_data2(message)
 
 def check_draw(): #檢查回饋待改圖
     xls = load_excel_gp.Load_xls()
@@ -51,10 +52,53 @@ def check_draw(): #檢查回饋待改圖
         line = line_notify_gp.Line()
         line.post_data2(message, 'comeon01.jpg')
 
+def bom_gtk(): # 檢查 bom建立作業未確認
+    sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+    line = load_excel_gp.Line()
+    db = tool_db_yst.YST()
+    n_count = db.ger_bom_gtk() # 未確認數量
+
+    if n_count == 0:
+        today = datetime.date.today()
+        if today.weekday() == 0: # 星期一
+            message = f'BOM建立作業經查已全數確認無異常,感謝您!\n系統檢查時間為{sys_time}'
+            # print(message)
+            line.post_data2(message)
+
+        else:
+            print('nice! it\'s no data.') # 無資料須要維護
+
+    else:
+        message = f"BOM建立作業尚有 {n_count} 筆未確認!\n系統檢查時間為{sys_time}"
+        # print(message)
+        line.post_data2(message)
+
+def bom_gfw(): # 檢查 bom變更單未確認
+    sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+    line = load_excel_gp.Line()
+    db = tool_db_yst.YST()
+    n_count = db.ger_bom_gfw() # 未確認數量
+
+    if n_count == 0:
+        today = datetime.date.today()
+        if today.weekday() == 0: # 星期一
+            message = f"BOM變更單經查已全數確認無異常,感謝您!\n系統檢查時間為{sys_time}"
+            # print(message)
+            line.post_data2(message)
+
+        else:
+            print('nice! it\'s no data.') # 無資料須要維護
+
+    else:
+        message = f"BOM變更單尚有 {n_count} 筆未確認!\n系統檢查時間為{sys_time}"
+        # print(message)
+        line.post_data2(message)
+        
 def main():
     check_draw() # 檢查回饋待改圖
     check_release() #檢查結案待發行
     check_timeout() #檢查待發行已達提醒時間
+    bom_gtk()       # 檢查 bom建立作業未確認
 
 if __name__ == '__main__':
     main()

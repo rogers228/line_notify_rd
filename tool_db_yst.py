@@ -45,53 +45,32 @@ class YST(): # 一條件尋找產品
         # print(df)
         return df.iloc[0]['TA011'] if len(df.index) > 0 else ''
 
-    # def ger_fst(self, mgstr): # 線別回傳線別代號
-    #     s = "SELECT TOP 1 MD001 FROM CMSMD WHERE MD002 LIKE '{0}'"
-    #     s = s.format(mgstr)
-    #     df = pd.read_sql(s, self.cn) #轉pd
-    #     return df.iloc[0]['MD001'].strip() if len(df.index) > 0 else ''
+    def ger_bom_gtk(self): # BOM建立作業未確認 筆數
+        s = """
+            SELECT COUNT(*) FROM BOMMC
+            WHERE MC016 LIKE 'N'
+            """
+        df = pd.read_sql(s, self.cn) #轉pd
+        return df.iloc[0][0]
 
-    # def ger_ffdic(self, mgstr): # 供應商回傳dic資訊
-    #     dic = {'內外':0,'代號':''}
-    #     fhi = self.ger_fhi(mgstr) #供應商
-    #     if fhi != '':
-    #         dic['內外'] = 2
-    #         dic['代號'] = fhi
-    #         return dic
-    #     fst = self.ger_fst(mgstr) #供應商
-    #     if fst != '':
-    #         dic['內外'] = 1
-    #         dic['代號'] = fst
-    #         return dic
-    #     return dic
-
-    # def ger_cms_count(self): # 製程回傳製程代號
-    #     # mgstr 廠商簡稱
-    #     s = "SELECT COUNT(*) FROM CMSMW"
-    #     df = pd.read_sql(s, self.cn) #轉pd
-    #     return df.iloc[0][0]
-
-    # def ger_cms_all(self): # 製程回傳製程代號
-    #     # mgstr 廠商簡稱
-    #     s = "SELECT MW001, MW002 FROM CMSMW ORDER BY MW001"
-    #     df = pd.read_sql(s, self.cn) #轉pd
-    #     return df
-
-    # def ger_cms(self, mgstr): # 製程回傳製程代號
-    #     # mgstr 廠商簡稱
-    #     s = "SELECT TOP 1 MW001, MW002 FROM CMSMW WHERE MW002 LIKE '{0}'"
-    #     s = s.format(mgstr)
-    #     df = pd.read_sql(s, self.cn) #轉pd
-    #     return df.iloc[0]['MW001'] if len(df.index) > 0 else ''
+    def ger_bom_gfw(self): # BOM變更單未確認 筆數
+        s = """
+            SELECT COUNT(*) FROM BOMTA
+            WHERE TA007 LIKE 'N'
+            """
+        df = pd.read_sql(s, self.cn) #轉pd
+        return df.iloc[0][0]
 
 def test1():
     db = YST()
-    ans = db.ger_ptd_kd('3301', '20220728011','4A506039')
-    print(ans)
+    # ans = db.ger_ptd_kd('3301', '20220728011','4A506039')
+    # print(ans)
 
-    ans = db.ger_tad_kd('5101', '20220801001','2BBL0050050502')
-    print(ans)
+    # ans = db.ger_tad_kd('5101', '20220801001','2BBL0050050502')
+    # print(ans)
 
+    ans = db.ger_bom_gfw()
+    print(ans)
 
 if __name__ == '__main__':
     test1()
