@@ -54,6 +54,19 @@ def test2():
     line.post_data2('hi, rogers, this is a test8.', 'comeon01.jpg')
     # line.post_data2('hi, rogers, this is a test6.')
 
+def test3():
+    line = Line()
+    t = '發圖這條路\n'
+    t += '1.先發也不行(單據版次不符)\n'
+    t += '2.沒發也不行(尺寸變更過了)\n'
+    t += '3.手改簽名圖記得發行品保\n'
+    t += '4.結案後正式發行(千萬不要忘記)\n'
+    t += '5.太久未結主動提醒\n'
+    t += '6.發行要登記(常說沒收到)\n'
+    t += '7.在途發行要通知採購備註SFT'
+
+    line.post_data2(t, 'release01.jpg')
+
 if __name__ == '__main__':
-    test2()
+    test3()
     print('ok')
