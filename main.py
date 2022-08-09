@@ -99,7 +99,8 @@ def main():
     check_release() #檢查結案待發行
     check_timeout() #檢查待發行已達提醒時間
     bom_gtk()       # 檢查 bom建立作業未確認
-
+    bom_gfw() # 檢查回饋待改圖
+    
 if __name__ == '__main__':
     main()
     print('line_notify is finished')
