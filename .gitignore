@@ -1,2 +1,5 @@
+__pycache__/
+test/
+old/
 test*.py
 config.py
