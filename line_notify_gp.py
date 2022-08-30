@@ -5,30 +5,9 @@ import config
 class Line():
     def __init__(self):
         self.token = config.sys_token
-
-    def post_data(self, message):
-        try:
-            url = "https://notify-api.line.me/api/notify"
-            headers = {
-                'Authorization': f'Bearer {self.token}'
-            }
-            payload = {
-                'message': message
-            }
-            response = requests.request(
-                "POST",
-                url,
-                headers=headers,
-                data=payload
-            )
-            if response.status_code == 200:
-                print(f"Success -> {response.text}")
-
-        except Exception as _:
-            print(_)
     
     # 新增圖片功能
-    def post_data2(self, message, imgfile=''):
+    def post_data(self, message, imgfile=''):
         try:
             url = "https://notify-api.line.me/api/notify"
             headers = {'Authorization': f'Bearer {self.token}'}

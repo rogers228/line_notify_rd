@@ -9,28 +9,7 @@ class Line():
     def __init__(self):
         self.token = config.sys_self_token
 
-    # def post_data(self, message):
-    #     try:
-    #         url = "https://notify-api.line.me/api/notify"
-    #         headers = {
-    #             'Authorization': f'Bearer {self.token}'
-    #         }
-    #         payload = {
-    #             'message': message
-    #         }
-    #         response = requests.request(
-    #             "POST",
-    #             url,
-    #             headers=headers,
-    #             data=payload
-    #         )
-    #         if response.status_code == 200:
-    #             print(f"Success -> {response.text}")
-
-    #     except Exception as _:
-    #         print(_)
-
-    def post_data2(self, message, imgfile=''):
+    def post_data(self, message, imgfile=''):
         try:
             url = "https://notify-api.line.me/api/notify"
             headers = {'Authorization': f'Bearer {self.token}'}
@@ -65,8 +44,12 @@ def test3():
     t += '6.發行要登記(常說沒收到)\n'
     t += '7.在途發行要通知採購備註SFT'
 
-    line.post_data2(t, 'release01.jpg')
+    line.post_data(t, 'release01.jpg')
+
+def test4():
+    line = Line()
+    line.post_data('小幫手提醒你，改圖已超過規定時間', 'bomb01.jpg')
 
 if __name__ == '__main__':
-    test3()
+    test4()
     print('ok')
