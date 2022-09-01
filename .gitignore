@@ -3,3 +3,4 @@ test/
 old/
 test*.py
 config.py
+log*.txt

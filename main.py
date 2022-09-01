@@ -3,8 +3,10 @@ import load_excel_gp
 import load_excel_wn
 import line_notify_gp
 import tool_db_yst
+import tool_mylog
 
 def check_release(): #檢查結案待發行
+    log = tool_mylog.MyLog()
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
     line = line_notify_gp.Line()
     xls = load_excel_wn.Load_xls()
@@ -14,7 +16,10 @@ def check_release(): #檢查結案待發行
         # print(message)
         line.post_data(message)
 
+    log.write('檢查結案待發行 完成')
+
 def check_timeout(): #檢查待發行已達提醒時間
+    log = tool_mylog.MyLog()
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
     line = line_notify_gp.Line()
     xls = load_excel_wn.Load_xls()
@@ -24,7 +29,10 @@ def check_timeout(): #檢查待發行已達提醒時間
         # print(message)
         line.post_data(message)
 
+    log.write('檢查待發行已達提醒時間 完成')
+
 def check_draw(): #檢查回饋待改圖
+    log = tool_mylog.MyLog()
     xls = load_excel_gp.Load_xls()
     n_count =   xls.get_nup_count() # 未修改數量
     last_date = xls.get_last_date() # 最後登錄日期
@@ -48,9 +56,12 @@ def check_draw(): #檢查回饋待改圖
         line = line_notify_gp.Line()
         line.post_data(message, image)
 
+    log.write('檢查回饋待改圖 完成')
+
 def bom_gtk(): # 檢查 bom建立作業未確認
+    log = tool_mylog.MyLog()
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
-    line = load_excel_gp.Line()
+    line = line_notify_gp.Line()
     db = tool_db_yst.YST()
     n_count = db.ger_bom_gtk() # 未確認數量
 
@@ -69,9 +80,12 @@ def bom_gtk(): # 檢查 bom建立作業未確認
         # print(message)
         line.post_data(message)
 
+    log.write('檢查bom建立作業未確認 完成')
+
 def bom_gfw(): # 檢查 bom變更單未確認
+    log = tool_mylog.MyLog()
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
-    line = load_excel_gp.Line()
+    line = line_notify_gp.Line()
     db = tool_db_yst.YST()
     n_count = db.ger_bom_gfw() # 未確認數量
 
@@ -89,7 +103,9 @@ def bom_gfw(): # 檢查 bom變更單未確認
         message = f"BOM變更單尚有 {n_count} 筆未確認!\n系統檢查時間為{sys_time}"
         # print(message)
         line.post_data(message)
-        
+    
+    log.write('檢查bom變更單未確認 完成')
+
 def main():
     check_draw() # 檢查回饋待改圖
     check_release() #檢查結案待發行
