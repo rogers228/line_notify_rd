@@ -61,6 +61,28 @@ class YST(): # 一條件尋找產品
         df = pd.read_sql(s, self.cn) #轉pd
         return df.iloc[0][0]
 
+    def ger_model(self, model): # 依型號開頭碼查詢 品號 貨號
+        # mgstr 廠商簡稱
+        # 僅查詢 非正確的 wq06不是1者 
+        s = """
+            SELECT RTRIM(MB001) AS MB001,MB080
+            FROM INVMB
+            WHERE
+                (MB002 NOT LIKE '%停用%') AND
+                (MB080 LIKE '{0}%')
+                AND (MB080 NOT IN (
+                    SELECT wq02 FROM YEOSHE_MAKE.dbo.rec_wq WHERE wq02 LIKE '{0}%' AND wq06 = 1
+                    ))
+            """
+
+        s = s.format(model)
+        # print(s)
+        df = pd.read_sql(s, self.cn) #轉pd
+        return df
+
+
+
+        # (MB080 NOT IN ('PPV1-PV-016-A0-2-R-K-1-A-0-N-'))
 def test1():
     db = YST()
     # ans = db.ger_ptd_kd('3301', '20220728011','4A506039')
@@ -69,8 +91,8 @@ def test1():
     # ans = db.ger_tad_kd('5101', '20220801001','2BBL0050050502')
     # print(ans)
 
-    ans = db.ger_bom_gfw()
-    print(ans)
+    df = db.ger_model('PPV1-')
+    print(df)
 
 if __name__ == '__main__':
     test1()
