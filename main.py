@@ -108,20 +108,25 @@ def bom_gfw(): # 檢查 bom變更單未確認
 
 def check_ysmd(): # 檢查ysmd網站
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
-    response = requests.get("http://www.yeoshe.tw")
-    if response.status_code == 200:
-        today = datetime.date.today()
-        message = f'恭喜您! ysmd選型app正常運作，系統檢查時間為{sys_time}'
-        if today.weekday() == 0: # 星期一
-            line = line_notify_gp.Line()
-            line.post_data(message)
-        else:
-            print(message)
-    else:
+    try:
+        response = requests.get("http://www.yeoshe.tw")
+        
+    except:
         message = f'ysmd選型app異常!請檢查!，系統檢查時間為{sys_time}'
         print(message)
         line = line_notify_gp.Line()
         line.post_data(message)
+
+    else:
+        if response.status_code == 200:
+            today = datetime.date.today()
+            message = f'恭喜您! ysmd選型app正常運作，系統檢查時間為{sys_time}'
+            if today.weekday() == 0: # 星期一
+                line = line_notify_gp.Line()
+                line.post_data(message)
+            else:
+                print(message)
+
 
 def main():
     check_draw() # 檢查回饋待改圖
