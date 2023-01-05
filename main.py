@@ -4,6 +4,7 @@ import load_excel_wn
 import line_notify_gp
 import tool_db_yst
 import tool_mylog
+import requests
 
 def check_release(): #檢查結案待發行
     log = tool_mylog.MyLog()
