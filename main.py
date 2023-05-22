@@ -12,6 +12,7 @@ def check_release(): #檢查結案待發行
     line = line_notify_gp.Line()
     xls = load_excel_wn.Load_xls()
     df = xls.get_cgp()
+    # print(df)
     for i, r in df.iterrows():
         message = f"{r['品號']} {r['品名']} 已結案可以發行 {r['變更後版次']} 版\n系統檢查時間為{sys_time}"
         # print(message)
@@ -137,6 +138,11 @@ def main():
     bom_gfw()       # 檢查 bom變更單未確認
     check_ysmd()    # 檢查 ysmd選型app
 
+def test():
+    print('test')
+    check_release() #檢查結案待發行
+    
 if __name__ == '__main__':
+    # test()
     main()
     print('line_notify is finished')
