@@ -2,6 +2,7 @@ import time, datetime
 import load_excel_gp
 import load_excel_wn
 import line_notify_gp
+import load_excel_pu
 import tool_db_yst
 import tool_mylog
 import requests
@@ -129,7 +130,23 @@ def check_ysmd(): # 檢查ysmd網站
             else:
                 print(message)
 
+def check_puy(): #檢查採購追蹤
+    log = tool_mylog.MyLog()
+    sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+    line = line_notify_gp.Line()
+    xls = load_excel_pu.Load_xls()
+    df = xls.get_puy()
+    # print(df)
+    for i, r in df.iterrows():
+        if r['結案碼'] in ['y', 'Y']:
+            message = f"{r['品號']} {r['品名']} 向{r['簡稱']}採購{r['採購數量']}PCS, 已結案, 請記錄至工作日誌。\n系統檢查時間為{sys_time}"
+        else:
+            message = f"{r['品號']} {r['品名']} 向{r['簡稱']}採購{r['採購數量']}PCS, 尚未結案, 請追蹤進度。\n系統檢查時間為{sys_time}"
+        # print(message)
+        line.post_data(message)
 
+    log.write('檢查採購追蹤 完成')
+    
 def main():
     check_draw() # 檢查回饋待改圖
     check_release() #檢查結案待發行
