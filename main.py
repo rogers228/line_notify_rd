@@ -3,6 +3,7 @@ import load_excel_gp
 import load_excel_wn
 import line_notify_gp
 import load_excel_pu
+import load_excel_mo
 import tool_db_yst
 import tool_mylog
 import requests
@@ -146,14 +147,54 @@ def check_puy(): #檢查採購追蹤
         line.post_data(message)
 
     log.write('檢查採購追蹤 完成')
-    
+
+def check_moy(): #檢查製令追蹤
+    log = tool_mylog.MyLog()
+    sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+    line = line_notify_gp.Line()
+    db = tool_db_yst.YST()
+    xls = load_excel_mo.Load_xls()
+    df = xls.get_moy()
+    # print(df)
+    # print('-----')
+    for i, r in df.iterrows():
+        # print(r['結案碼'])
+
+        # 1.未生產,2.已發料,3.生產中,Y.已完工,y.指定完工
+        if r['結案碼'] == '1':
+            # print('1.未生產')
+            message = f"製令{r['製令單別']}-{r['單號']} {r['品號']} {r['品名']} 預計生產{r['預計數量']}PCS, 尚未生產, 請追蹤進度。\n系統檢查時間為{sys_time}"
+        elif r['結案碼'] in ['y', 'Y']:
+            # print('完工')
+            message = f"恭喜您!製令{r['製令單別']}-{r['單號']} {r['品號']} {r['品名']} 預計生產{r['預計數量']}PCS, 已結案, 請記錄至工作日誌。\n系統檢查時間為{sys_time}"
+        else:
+            # print('else')
+            message = 'else'
+            df_m = db.ger_tad_mtc(r['製令單別'], r['單號'])
+            # print(df_m)
+            if len(df_m.index) == 0:
+                message = f"製令{r['製令單別']}-{r['單號']} {r['品號']} {r['品名']} 預計生產{r['預計數量']}PCS, 尚未開單, 請追蹤進度。\n系統檢查時間為{sys_time}"
+            else:
+                dic_tc = {'D101':'廠內發料單','D102':'託外發料單','D201':'廠內移轉單','D202':'託外移轉單','D301':'廠內入庫單','D302':'託外入庫單'}
+                j = df_m.iloc[0]
+                message = f"製令{r['製令單別']}-{r['單號']} {r['品號']} {r['品名']} 預計生產{r['預計數量']}PCS, 最後移轉紀錄:\n"
+                message += f"{dic_tc[j['移轉單別']]}{j['移轉單別']}-{j['移轉單號']} 製程已移轉至 {j['移入單位']} {j['移入製程']} {j['驗收數量']}{j['單位']}"
+                message += f", 請記錄至工作日誌。\n系統檢查時間為{sys_time}"
+
+        # print(message)
+        # print('---')
+        line.post_data(message)
+    log.write('檢查製令追蹤 完成')
+
 def main():
-    check_draw() # 檢查回饋待改圖
+    check_draw()    # 檢查回饋待改圖
     check_release() #檢查結案待發行
     check_timeout() #檢查待發行已達提醒時間
     bom_gtk()       # 檢查 bom建立作業未確認
     bom_gfw()       # 檢查 bom變更單未確認
     check_ysmd()    # 檢查 ysmd選型app
+    check_puy()     #檢查採購追蹤
+    check_moy()     #檢查製令追蹤
 
 def test():
     print('test')
