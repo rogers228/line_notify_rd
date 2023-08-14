@@ -51,7 +51,7 @@ class Load_xls(): #讀取excel
 
     def get_nup(self): # 尚未修改的資料
         df = self.df
-        df_w = df.loc[(df['日期'] != '') & (df['完成日期'] == '')] # 篩選
+        df_w = df.loc[(df['日期'] != '') & (df['提出人'] != '') & (df['完成日期'] == '')] # 篩選
         df_g = df_w.copy() #複製
         df_g['日期'] =  pd.to_datetime(df_g['日期'], format='Y-%m-%d') # 時間格式化  轉時間
         df_g['日期'] = df_g['日期'].dt.strftime('%Y-%m-%d')  #格式化後 再轉回文字
