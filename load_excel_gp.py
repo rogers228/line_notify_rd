@@ -47,6 +47,7 @@ class Load_xls(): #讀取excel
         # print(lis_data)
         df = pd.DataFrame(lis_data, columns = lis_standard) # 建立 DataFrame
         df = df.fillna('') # 填充NaN為空白
+
         self.df = df
 
     def get_nup(self): # 尚未修改的資料
@@ -74,17 +75,23 @@ class Load_xls(): #讀取excel
 
     def get_last_date(self): # 最後登入日期
         df = self.df
-        df_w = df.loc[df['日期'] != ''] # 篩選
+        df_w = df.loc[(df['日期'] != '') & (df['提出人'] != '') & (df['完成日期'] == '')] # 篩選
         # print(df_w)
-        last_date = df_w["日期"].max().to_period('D')
-        return last_date
+        date = df_w["日期"].max().to_period('D')
+        return date
 
+    def get_first_date(self): # 最早登入日期
+        df = self.df
+        df_w = df.loc[(df['日期'] != '') & (df['提出人'] != '') & (df['完成日期'] == '')] # 篩選
+        # print(df_w)
+        date = df_w["日期"].min().to_period('D')
+        return date
 
 def test1():
     xls = Load_xls()
-    print(xls.get_nup_count())
+    # print(xls.get_nup_count())
     print(xls.get_last_date())
-
+    print(xls.get_first_date())
     # xls.get_last_date()
 
 if __name__ == '__main__':

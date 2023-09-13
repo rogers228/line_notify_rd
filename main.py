@@ -39,6 +39,7 @@ def check_draw(): #檢查回饋待改圖
     log = tool_mylog.MyLog()
     xls = load_excel_gp.Load_xls()
     n_count =   xls.get_nup_count() # 未修改數量
+    first_date = xls.get_first_date() # 最早登錄日期
     last_date = xls.get_last_date() # 最後登錄日期
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
 
@@ -54,9 +55,10 @@ def check_draw(): #檢查回饋待改圖
             print('nice! it\'s no data.') # 無資料須要維護
 
     else:
-        d1 = datetime.datetime.strptime(str(last_date),'%Y-%m-%d'); d2 = datetime.datetime.today()
+        d1 = datetime.datetime.strptime(str(first_date),'%Y-%m-%d')
+        d2 = datetime.datetime.today()
         image = 'bomb01.jpg' if (d2 - d1).days > 7 else 'comeon01.jpg'
-        message = f'圖面回饋尚有 {n_count} 筆未修改！Excel最後登記日期為{last_date}，系統檢查時間為{sys_time}'
+        message = f'圖面回饋尚有 {n_count} 筆未修改！最早登記日期為{first_date}，最後登記日期為{last_date}，系統檢查時間為{sys_time}'
         line = line_notify_gp.Line()
         line.post_data(message, image)
 
