@@ -59,6 +59,9 @@ def check_draw(): #檢查回饋待改圖
         d2 = datetime.datetime.today()
         image = 'bomb01.jpg' if (d2 - d1).days > 7 else 'comeon01.jpg'
         message = f'圖面回饋尚有 {n_count} 筆未修改！最早登記日期為{first_date}，最後登記日期為{last_date}，系統檢查時間為{sys_time}'
+        dic = xls.get_expired_dic()
+        if dic['expired'] == True:
+            message += '，' + dic['info']
         line = line_notify_gp.Line()
         line.post_data(message, image)
 
@@ -109,14 +112,14 @@ def bom_gfw(): # 檢查 bom變更單未確認
         message = f"BOM變更單尚有 {n_count} 筆未確認!\n系統檢查時間為{sys_time}"
         # print(message)
         line.post_data(message)
-    
+
     log.write('檢查bom變更單未確認 完成')
 
 def check_ysmd(): # 檢查ysmd網站
     sys_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
     try:
         response = requests.get("http://www.yeoshe.tw")
-        
+
     except:
         message = f'ysmd選型app異常!請檢查!，系統檢查時間為{sys_time}'
         print(message)
@@ -194,14 +197,14 @@ def main():
     check_timeout() #檢查待發行已達提醒時間
     bom_gtk()       # 檢查 bom建立作業未確認
     bom_gfw()       # 檢查 bom變更單未確認
-    check_ysmd()    # 檢查 ysmd選型app
+    # check_ysmd()  # 檢查 ysmd選型app 2024停止服務 故不檢查
     check_puy()     #檢查採購追蹤
     check_moy()     #檢查製令追蹤
 
 def test():
     print('test')
     check_release() #檢查結案待發行
-    
+
 if __name__ == '__main__':
     # test()
     main()

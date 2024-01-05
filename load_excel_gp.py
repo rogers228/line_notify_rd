@@ -1,4 +1,5 @@
 import time
+from datetime import datetime, timedelta
 import openpyxl
 import pandas as pd
 import json
@@ -52,6 +53,7 @@ class Load_xls(): #讀取excel
 
     def get_nup(self): # 尚未修改的資料
         df = self.df
+        # print(df)
         df_w = df.loc[(df['日期'] != '') & (df['提出人'] != '') & (df['完成日期'] == '')] # 篩選
         df_g = df_w.copy() #複製
         df_g['日期'] =  pd.to_datetime(df_g['日期'], format='Y-%m-%d') # 時間格式化  轉時間
@@ -87,12 +89,35 @@ class Load_xls(): #讀取excel
         date = df_w["日期"].min().to_period('D')
         return date
 
+    def get_expired_dic(self): # 已經過期的最早登入日期的詳細資訊
+        df = self.df
+        df_w = df.loc[(df['日期'] != '') & (df['提出人'] != '') & (df['完成日期'] == '')] # 篩選
+        # print(df_w)
+        # print(df_w.columns)
+        df_s = df_w.copy()
+        df_s['days'] = (datetime.now() - df_w['日期']).dt.days # 距今日天數
+        df_s = df_s.sort_values(by='days', ascending=False)    # 排序
+        # print(df_w)
+        dic = {}
+        e = df_s.iloc[0]
+        if e['days'] > 7: #過期7日
+            dic['expired'] = True
+            date = e['日期']
+            mydate_datetime2Str = date.strftime('%Y-%m-%d')
+            # dic['info'] = f"{e['日期'].strftime('%Y-%m-%d')} 由{e['提出人']}登記，{e['圖號(版別)']} 尚未修改已超過7日!"
+            dic['info'] = f"由{e['提出人']}登記，{e['圖號(版別)']} 尚未修改已超過7日!"
+        else:
+            dic['expired'] = False
+            dic['info'] = ''
+        return dic
+
 def test1():
     xls = Load_xls()
     # print(xls.get_nup_count())
-    print(xls.get_last_date())
-    print(xls.get_first_date())
-    # xls.get_last_date()
+    # print(xls.get_last_date())
+    # print(xls.get_first_date())
+    print(xls.get_expired_dic())
+
 
 if __name__ == '__main__':
     test1()
