@@ -1,3 +1,7 @@
+# 停用
+於20241114已停止使用，因line notify即將停用
+改由ys_rd_notify專案取代
+
 # line notify 小幫手
 1. Excel作為任務平台，多人共同編輯。
 2. A將資訊維護在Excle, B負責處理後續，C負責稽核監督。
